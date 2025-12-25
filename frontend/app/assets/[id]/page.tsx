@@ -57,11 +57,13 @@ export default function AssetDetailPage() {
   const [trajectory, setTrajectory] = useState<TrajectoryPoint[]>([])
   const [causal, setCausal] = useState<CausalEffects | null>(null)
   const [loading, setLoading] = useState(true)
+  const [useFallback, setUseFallback] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
       try {
         if (USE_MOCK) {
+          setUseFallback(true)
           const mockAsset = mockAssets.find((a) => a.id === assetId)
           if (mockAsset) {
             setAsset(mockAsset)
@@ -112,6 +114,7 @@ export default function AssetDetailPage() {
       } catch (error) {
         console.error("Failed to fetch asset data:", error)
         // Fallback to mock
+        setUseFallback(true)
         const mockAsset = mockAssets.find((a) => a.id === assetId)
         if (mockAsset) {
           setAsset(mockAsset)
@@ -120,6 +123,24 @@ export default function AssetDetailPage() {
           setFft(generateMockFFT(assetId))
           setTrajectory(generateMockTrajectory(assetId))
           setCausal({ ...mockCausalEffects, asset_id: assetId })
+          // Generate mock features
+          const mockFft = generateMockFFT(assetId)
+          setFeatures({
+            rms: 1.2 + Math.random() * 0.5,
+            peak: 3.5 + Math.random(),
+            crest_factor: 2.5 + Math.random(),
+            kurtosis: 0.5 + Math.random() * 2,
+            skewness: -0.2 + Math.random() * 0.4,
+            spectral_centroid: mockFft.dominant_frequency,
+            spectral_spread: 150 + Math.random() * 100,
+            bandpowers: {
+              "0-100": 0.1 + Math.random() * 0.1,
+              "100-500": 0.3 + Math.random() * 0.2,
+              "500-1000": 0.15 + Math.random() * 0.1,
+              "1000-2000": 0.05 + Math.random() * 0.05,
+              "2000+": 0.02 + Math.random() * 0.02,
+            },
+          })
         }
       } finally {
         setLoading(false)
@@ -132,7 +153,7 @@ export default function AssetDetailPage() {
   const handleCounterfactual = async (
     interventions: Record<string, number>
   ): Promise<CounterfactualResult> => {
-    if (USE_MOCK) {
+    if (USE_MOCK || useFallback) {
       // Mock counterfactual result
       const originalRul = rul?.rul_days || 100
       const loadEffect = (70 - interventions.load) * 0.5

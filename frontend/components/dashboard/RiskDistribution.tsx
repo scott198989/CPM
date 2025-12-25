@@ -78,7 +78,10 @@ export function RiskDistribution({ data, loading }: RiskDistributionProps) {
                   backgroundColor: "hsl(var(--card))",
                   border: "1px solid hsl(var(--border))",
                   borderRadius: "8px",
+                  color: "hsl(var(--card-foreground))",
                 }}
+                formatter={(value: number, name: string) => [`${value} assets`, name]}
+                labelStyle={{ color: "hsl(var(--card-foreground))" }}
               />
               <Legend />
             </PieChart>
