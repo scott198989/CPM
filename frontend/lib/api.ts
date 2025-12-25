@@ -30,6 +30,7 @@ export interface TimeseriesPoint {
   ambient_temp: number
   wear: number
   failure_risk: number
+  [key: string]: string | number | null
 }
 
 export interface RULPrediction {

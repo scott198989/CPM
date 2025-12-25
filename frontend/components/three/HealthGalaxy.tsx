@@ -1,8 +1,8 @@
 "use client"
 
 import { useRef, useMemo, useState } from "react"
-import { Canvas, useFrame, ThreeElements } from "@react-three/fiber"
-import { OrbitControls, Text, Html } from "@react-three/drei"
+import { Canvas, useFrame } from "@react-three/fiber"
+import { OrbitControls, Text, Html, Line } from "@react-three/drei"
 import * as THREE from "three"
 import type { Asset } from "@/lib/api"
 
@@ -130,16 +130,15 @@ function ConnectionLines({ assets }: { assets: Asset[] }) {
         const posA = getAssetPosition(a, assets.indexOf(a), assets.length)
         const posB = getAssetPosition(b, assets.indexOf(b), assets.length)
 
-        const points = [
-          new THREE.Vector3(...posA),
-          new THREE.Vector3(...posB),
-        ]
-        const geometry = new THREE.BufferGeometry().setFromPoints(points)
-
         return (
-          <line key={i} geometry={geometry}>
-            <lineBasicMaterial color="#4b5563" opacity={0.3} transparent />
-          </line>
+          <Line
+            key={i}
+            points={[posA, posB]}
+            color="#4b5563"
+            opacity={0.3}
+            transparent
+            lineWidth={1}
+          />
         )
       })}
     </>
