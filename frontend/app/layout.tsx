@@ -8,6 +8,9 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "CPM - Predictive Maintenance",
   description: "AI-powered predictive maintenance system with causal inference",
+  icons: {
+    icon: "/icon.svg",
+  },
 }
 
 export default function RootLayout({
